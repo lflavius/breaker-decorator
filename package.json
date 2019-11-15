@@ -1,0 +1,21 @@
+{
+  "name": "breaker-decorator",
+  "version": "1.0.0",
+  "description": "opossum wrapper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/opossum": "^4.1.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "opossum": "^4.2.0"
+  }
+}
