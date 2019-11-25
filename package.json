@@ -1,21 +1,43 @@
 {
   "name": "breaker-decorator",
-  "version": "1.0.0",
-  "description": "opossum wrapper",
-  "main": "index.js",
+  "version": "1.0.2",
+  "description": "opossum wrapper using clojures and decorators",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/main.ts"
+    "test": "node_modules/.bin/mocha -r ts-node/register tests/**/*.test.ts",
+    "build": "tsc",
+    "tsc:d": "tsc -d --declarationMap --emitDeclarationOnly",
+    "start": "ts-node src/main.ts",
+    "coverage": "node_modules/.bin/nyc npm test",
+    "example1": "node dist/src/examples/classesClojure.js",
+    "example2": "node dist/src/examples/classesDecorator.js",
+    "example3": "node dist/src/examples/functionClojure.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Flavius",
+    "email": "flaav12@gmail.com"
+  },
+  "license": "UNLICENSED",
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^0.1.3",
+    "@types/chai": "^4.2.5",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/mocha": "^5.2.7",
     "@types/opossum": "^4.1.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
     "ts-node": "^8.4.1",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "opossum": "^4.2.0"
-  }
+    "@types/request": "^2.48.3",
+    "opossum": "^4.2.0",
+    "request": "^2.88.0"
+  },
+  "files": [
+    "dist/*"
+  ]
 }
