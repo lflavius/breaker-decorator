@@ -4,9 +4,10 @@ import CircuitBreaker, {
 
 
 export interface IBreakerHooks {
-  onOpen?: () => void;
-  onClosed?: () => void;
-  onHalfOpen?: () => void;
+    onOpen?: () => void;
+    onClosed?: () => void;
+    onHalfOpen?: () => void;
+    onTimeout?: (err?: Error) => void;
 }
 
 export const useBreaker = <T, K>(breakerOptions: Options, fallback?: Function, hooks?: IBreakerHooks) => {
@@ -33,25 +34,34 @@ export const useBreaker = <T, K>(breakerOptions: Options, fallback?: Function, h
   }
 }
 
-export const withBreaker = <T, K>(breakerOptions: CircuitBreaker.Options, fallback?: any, hooks?: IBreakerHooks) => {
-  return (callback: any) => {
-    const breaker = new CircuitBreaker<unknown[],K>(callback, breakerOptions);
 
-    if(fallback)
-      breaker.fallback(fallback);
 
-    if(hooks) {
+export const withBreaker = <T, K>(breakerOptions: Options, fallback?: () => void, hooks?: IBreakerHooks) => {
 
-      if(hooks.onOpen)
-        breaker.on("open", hooks.onOpen);
+    // this is a known issue in Typescript (https://github.com/microsoft/TypeScript/issues/1805). 
+    // In order to get rid of it we should either have to write all possible overloads for callback
+    // or disable the linter for this specific line
+    // tslint:disable-next-line: no-any
+    return (callback: (...arg: Array<any>) => Promise<K>) => {
+        const breaker = new CircuitBreaker<Array<T>, K>(callback, breakerOptions);
+        if (fallback)
+            breaker.fallback(fallback);
 
-      if(hooks.onHalfOpen)
-        breaker.on("halfOpen", hooks.onHalfOpen);
+        if (hooks) {
+            if (hooks.onOpen)
+                breaker.on("open", hooks.onOpen);
 
-      if(hooks.onClosed) 
-        breaker.on("close", hooks.onClosed);
-    } 
+            if (hooks.onHalfOpen)
+                breaker.on("halfOpen", hooks.onHalfOpen);
 
-    return (args: T): Promise<K> => breaker.fire(args);
-  }
-}
+            if (hooks.onClosed)
+                breaker.on("close", hooks.onClosed);
+
+            if (hooks.onTimeout)
+                breaker.on("timeout", hooks.onTimeout);
+
+        }
+
+        return (args: T): Promise<K> => breaker.fire(args);
+    };
+};
